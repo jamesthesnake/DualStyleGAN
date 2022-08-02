@@ -15,6 +15,7 @@ In CVPR 2022.<br>
 
 ## Updates
 
+- [07/2022] Source code license is updated.
 - [03/2022] Paper and supplementary video are released.
 - [03/2022] Web demo is created.
 - [03/2022] Code is released.
@@ -23,7 +24,9 @@ In CVPR 2022.<br>
 
 ## Web Demo
 
-Integrated into [Huggingface Spaces 🤗](https://huggingface.co/spaces) using [Gradio](https://github.com/gradio-app/gradio). Try out the Web Demo: [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/hysts/DualStyleGAN)
+Integrated into [Huggingface Spaces 🤗](https://huggingface.co/spaces) using [Gradio](https://github.com/gradio-app/gradio). Try out the Web Demo: [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/hysts/DualStyleGAN) or [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/Gradio-Blocks/DualStyleGAN)
+
+
 
 
 ## Installation
@@ -127,7 +130,7 @@ python style_transfer.py --content ./data/content/unsplash-rDEOVtE7vOs.jpg --ali
 More options can be found via `python style_transfer.py  -h`.
 
 
-**Remarks**: Our trained pSp encoder on Z+ space cannot perfectly encode the content image. If the style transfer result more consistent with the content image is desired, one may use latent optimization to better fit the content image or using other StyleGAN encoders.
+**Remarks**: Our trained pSp encoder on Z+ space cannot perfectly encode the content image. If the style transfer result more consistent with the content image is desired, one may use latent optimization to better fit the content image or using other StyleGAN encoders (as discussed in https://github.com/williamyang1991/DualStyleGAN/issues/11 and https://github.com/williamyang1991/DualStyleGAN/issues/29).
 
 ### Artistic Portrait Generation
 Generate random Cartoon face images (Results are saved in the `./output/` folder):
@@ -179,7 +182,7 @@ Take the cartoon dataset for example, run (batch size of 8\*4=32 is recommended)
                           --batch 4 --ckpt ./checkpoint/stylegan2-ffhq-config-f.pt --style cartoon
                           --augment ./data/cartoon/lmdb/
 
-The fine-tuned model can be found in `./checkpoint/cartoon/fintune-000600.pt`. Intermediate results are saved in `./log/cartoon/`.
+The fine-tuned model can be found in `./checkpoint/cartoon/finetune-000600.pt`. Intermediate results are saved in `./log/cartoon/`.
 
 **Step 3: Destylize artistic portraits.** 
 ```python
@@ -204,7 +207,7 @@ where `./data/ffhq/lmdb/` contains the lmdb data created from the FFHQ dataset v
 
 **Stage 3: Fine-Tune DualStyleGAN on Target Domain.** Fine-tune DualStyleGAN in distributed settings:
 ```python
-python -m torch.distributed.launch --nproc_per_node=N_GPU --master_port=PORT finetune_stylegan.py --iter ITERATIONS \ 
+python -m torch.distributed.launch --nproc_per_node=N_GPU --master_port=PORT finetune_dualstylegan.py --iter ITERATIONS \ 
                           --batch BATCH_SIZE --ckpt PRETRAINED_MODEL_PATH --augment DATASET_NAME
 ```
 The loss term weights can be specified by `--style_loss` (λ<sub>FM</sub>), `--CX_loss` (λ<sub>CX</sub>), `--perc_loss` (λ<sub>perc</sub>), `--id_loss` (λ<sub>ID</sub>) and `--L2_reg_loss` (λ<sub>reg</sub>). λ<sub>ID</sub> and λ<sub>reg</sub> are suggested to be tuned for each style dataset to achieve ideal performance. More options can be found via `python finetune_dualstylegan.py -h`.
